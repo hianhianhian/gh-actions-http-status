@@ -9,6 +9,7 @@ NC='\033[0m'        # No Color
 
 text_success="(${LGREEN}Success${NC})"
 text_failed="(${LRED}Failed${NC}) "
+status_result_string=""
 
 http_status() {
     site_url=$1
@@ -24,8 +25,15 @@ http_status() {
         final_result_code=127
     
     fi
-    
-    echo -e "${result} HTTP Status for ${site_url} is ${actual_status}, expected ${expected_status}"
+
+    # Construct the status string for this site
+    site_result="HTTP Status for ${site_url} is ${actual_status}, expected ${expected_status}"
+
+    # Append to the cumulative status_result
+    status_result_string="${status_result_string}${site_result}"$'\n'
+
+    # Output the string to the console for visibility
+    echo -e "${site_result}"
 }
 
 echo -e "\n\n==Starting gh-actions HTTP Status==\n"
@@ -44,5 +52,8 @@ done
 
 echo -e "\nHTTP Status result: ${final_result}"
 echo -e "\n==END==\n\n"
+
+# Set the output variable for Github
+printf "status_result=%s\n" "$status_result_string" >> $GITHUB_OUTPUT
 
 exit ${final_result_code}

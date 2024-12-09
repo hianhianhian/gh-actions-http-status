@@ -32,3 +32,6 @@ The following configuration options are available:
 * `expected` List expected HTTP status codes in JSON (eg: [301, 200])
 
 *note*: please make sure the JSON are valid.
+
+## Output
+* `status_result`: The final result string.
