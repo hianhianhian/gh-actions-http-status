@@ -19,18 +19,21 @@ http_status() {
     
     if [ "${actual_status}" == "${expected_status}" ]; then
         result=${text_success}
+        result_string="[Success]"
     else
         result=${text_failed}
+        result_string="[Failed]"
         final_result=${text_failed}
+        final_result_string="Failed"
         final_result_code=127
     
     fi
 
     # Construct the status string for this site
-    site_result="HTTP Status for ${site_url} is ${actual_status}, expected ${expected_status}"
+    site_result="${result_string} HTTP Status for ${site_url} is ${actual_status}, expected ${expected_status}"
 
     # Append to the cumulative status_result
-    status_result_string="${status_result_string}${site_result}"$'\n'
+    status_result_string="${status_result_string}${site_result} \n"
 
     # Output the string to the console for visibility
     echo -e "${site_result}"
@@ -39,6 +42,7 @@ http_status() {
 echo -e "\n\n==Starting gh-actions HTTP Status==\n"
 
 final_result="${LGREEN}Success${NC}"
+final_result_string="Success"
 final_result_code=0
 
 len=$(printenv INPUT_SITES | jq -r '. | length')
@@ -54,6 +58,7 @@ echo -e "\nHTTP Status result: ${final_result}"
 echo -e "\n==END==\n\n"
 
 # Set the output variable for Github
-printf "status_result=%s\n" "$status_result_string" >> $GITHUB_OUTPUT
+echo "status_result=$status_result_string" >> $GITHUB_OUTPUT
+echo "final_status=$final_result_string" >> $GITHUB_OUTPUT
 
 exit ${final_result_code}
